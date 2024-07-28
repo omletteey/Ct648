@@ -1,0 +1,5 @@
+# Dockerfile.mysql
+FROM mysql:5.7
+
+# คัดลอกไฟล์ SQL ไปที่ /docker-entrypoint-initdb.d/
+COPY ./sql/sql.sql /docker-entrypoint-initdb.d/

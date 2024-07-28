@@ -1,0 +1,51 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    volumes:
+      - ./src:/var/www/html
+    networks:
+      - php
+
+  db:
+    build:
+      context: .
+      dockerfile: Dockerfile.mysql
+    container_name: mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: laravellogin
+      MYSQL_ROOT_PASSWORD: 12345678
+      MYSQL_PASSWORD: 12345678
+      MYSQL_USER: laravel
+    volumes:
+      - dbdata:/var/lib/mysql/
+      - ./sql:/docker-entrypoint-initdb.d
+    networks:
+      - php
+    ports:
+      - "3306:3306"
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: 12345678
+    ports:
+      - "8080:80"
+    networks:
+      - php
+
+networks:
+  php:
+    driver: bridge
+
+volumes:
+  dbdata:
+    driver: local
